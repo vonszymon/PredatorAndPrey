@@ -4,23 +4,23 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
 
-public class Grass extends Plant { 
+public class Carrot extends Plant { 
 	
-	private static int MAX_GRASS = 4000;
+	private static int MAX_CARROT = 4000;
 	
-	public static long GRASS_COUNT = 0;
+	public static long CARROT_COUNT = 0;
 	
 	private int reproduceInterval;
 	
-	public Grass(ContinuousSpace<Object> space, Grid<Object> grid) {
-		super(space, grid, Grass.class, GRASS_COUNT);
+	public Carrot(ContinuousSpace<Object> space, Grid<Object> grid) {
+		super(space, grid, Carrot.class, CARROT_COUNT);
 		this.reproduceInterval = RandomHelper.nextIntFromTo(7,10);
-		GRASS_COUNT++;
+		CARROT_COUNT++;
 	}
 	
 	@Override
 	public String toString(){
-		return "Grass: "+ID;
+		return "Carrot: "+ID;
 	}
 
 	@Override
@@ -30,16 +30,16 @@ public class Grass extends Plant {
 
 	@Override
 	public long getPlantsCount() {
-		return GRASS_COUNT;
+		return CARROT_COUNT;
 	}
 
 	@Override
 	public int getMaxPlants() {
-		return MAX_GRASS;
+		return MAX_CARROT;
 	}
 
 	@Override
 	public void decPlantsCount() {
-		GRASS_COUNT--;
+		CARROT_COUNT--;
 	}
 }

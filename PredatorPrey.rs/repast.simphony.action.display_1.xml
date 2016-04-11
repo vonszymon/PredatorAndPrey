@@ -1,5 +1,5 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>PredatorPrayDisplay</name>
+  <name>PredatorPrey Display</name>
   <type>2D</type>
   <styles>
     <entry>
@@ -7,26 +7,74 @@
       <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
     <entry>
+      <string>predatorPrey.Rabbit</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Lichen</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Wolf</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
       <string>predatorPrey.Grass</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
     <entry>
       <string>predatorPrey.Leopard</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Fox</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Carrot</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Caribou</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
       <string>predatorPrey.Antelope</string>
-      <string>predatorPrey.Antelope.style_0.xml</string>
+      <string>predatorPrey.Antelope.style_1.xml</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Rabbit</string>
+      <string>predatorPrey.Rabbit.style_0.xml</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Lichen</string>
+      <string>predatorPrey.Lichen.style_0.xml</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Wolf</string>
+      <string>predatorPrey.Wolf.style_0.xml</string>
     </entry>
     <entry>
       <string>predatorPrey.Grass</string>
-      <string>predatorPrey.Grass.style_0.xml</string>
+      <string>predatorPrey.Grass.style_1.xml</string>
     </entry>
     <entry>
       <string>predatorPrey.Leopard</string>
-      <string>predatorPrey.Leopard.style_0.xml</string>
+      <string>predatorPrey.Leopard.style_1.xml</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Fox</string>
+      <string>predatorPrey.Fox.style_0.xml</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Carrot</string>
+      <string>predatorPrey.Carrot.style_0.xml</string>
+    </entry>
+    <entry>
+      <string>predatorPrey.Caribou</string>
+      <string>predatorPrey.Caribou.style_0.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -39,7 +87,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1414105350</hashCode>
+    <hashCode>-80539808</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>space</layoutProjection>
@@ -47,15 +95,39 @@
   <layerOrder>
     <entry>
       <string>predatorPrey.Antelope</string>
+      <int>5</int>
+    </entry>
+    <entry>
+      <string>predatorPrey.Rabbit</string>
+      <int>3</int>
+    </entry>
+    <entry>
+      <string>predatorPrey.Lichen</string>
       <int>1</int>
     </entry>
     <entry>
+      <string>predatorPrey.Wolf</string>
+      <int>7</int>
+    </entry>
+    <entry>
       <string>predatorPrey.Grass</string>
-      <int>0</int>
+      <int>2</int>
     </entry>
     <entry>
       <string>predatorPrey.Leopard</string>
-      <int>2</int>
+      <int>8</int>
+    </entry>
+    <entry>
+      <string>predatorPrey.Fox</string>
+      <int>6</int>
+    </entry>
+    <entry>
+      <string>predatorPrey.Carrot</string>
+      <int>0</int>
+    </entry>
+    <entry>
+      <string>predatorPrey.Caribou</string>
+      <int>4</int>
     </entry>
   </layerOrder>
   <projections>
