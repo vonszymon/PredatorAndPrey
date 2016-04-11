@@ -23,6 +23,9 @@ public class EnvBuilder implements ContextBuilder<Object>{
 	@Override
 	public Context build(Context<Object> context) {
 		context.setId("PredatorPrey");
+		Grass.GRASS_COUNT = 0;
+		Leopard.LEOPARD_COUNT = 0;
+		Antelope.ANTELOPE_COUNT = 0;
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
 		ContinuousSpace<Object> space = spaceFactory.createContinuousSpace("space", context, new RandomCartesianAdder<Object>(),
 				new repast.simphony.space.continuous.WrapAroundBorders(), 100, 100);
