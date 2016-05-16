@@ -14,7 +14,7 @@ public class Grass extends Plant {
 	
 	public Grass(ContinuousSpace<Object> space, Grid<Object> grid) {
 		super(space, grid, Grass.class, GRASS_COUNT);
-		this.reproduceInterval = RandomHelper.nextIntFromTo(7,10);
+		this.reproduceInterval = RandomHelper.nextIntFromTo(10,15);
 		GRASS_COUNT++;
 	}
 	

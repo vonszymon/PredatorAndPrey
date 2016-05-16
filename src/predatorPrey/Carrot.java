@@ -14,7 +14,7 @@ public class Carrot extends Plant {
 	
 	public Carrot(ContinuousSpace<Object> space, Grid<Object> grid) {
 		super(space, grid, Carrot.class, CARROT_COUNT);
-		this.reproduceInterval = RandomHelper.nextIntFromTo(7,10);
+		this.reproduceInterval = RandomHelper.nextIntFromTo(10,15);
 		CARROT_COUNT++;
 	}
 	

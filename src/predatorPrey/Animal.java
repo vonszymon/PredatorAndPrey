@@ -24,7 +24,7 @@ public abstract class Animal {
 	
 	private Grid <Object> grid;
 	
-	private int health;
+	private int energy;
 	
 	private int stamina;
 	
@@ -32,19 +32,29 @@ public abstract class Animal {
 	
 	private long lastReproduceTime = 0;
 	
+	private long lastEatTimeTick = 0;
+	
+	private long eatInterval = 3;
+	
 	private List<Class<? extends Object>> prey;
 	
 	private Class<? extends Animal> self;
 	
+	private List<Feature> combatFeatures;
+	
+	private List<Feature> attributeFeatures;
+	
 	public abstract int getReproduceRadius();
 	
-	public abstract int getMaxHealth();
+	public abstract int getMaxEnergy();
 	
 	public abstract int getMaxStamina();
 	
 	public abstract int getReproduceEnergy();
 	
 	public abstract int getSpeed();
+	
+	public abstract int getStaminaLoss();
 	
 	public abstract int getReproduceInterval();
 	
@@ -53,7 +63,7 @@ public abstract class Animal {
 	public Animal(ContinuousSpace<Object> space, Grid<Object> grid, Class<? extends Animal> self, Class<? extends Object> prey, long ID){
 		this.space = space;
 		this.grid = grid;
-		this.health = getMaxHealth();
+		this.energy = getMaxEnergy();
 		this.stamina = getMaxStamina();
 		this.prey = new ArrayList<Class<? extends Object>>();
 		this.self = self;
@@ -63,14 +73,14 @@ public abstract class Animal {
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void act() {
-		health -= 1;
-		if(health <= 0){
+		energy -= 1;
+		if(energy <= 0){
 			Context<Object> context = ContextUtils.getContext(this);
 			context.remove(this);
 			System.out.println(this+" died from starvation");
 		} else {
 			int speed = getSpeed();
-			if(stamina - speed <= 0){
+			if(stamina - getStaminaLoss() <= 0){
 				stamina = getMaxStamina();
 			} else {
 				List<GridCell<Object>> gridCells = getNeighborsPrey(speed);
@@ -86,17 +96,21 @@ public abstract class Animal {
 		}
 	}
 	
-	public boolean searchForFood(List<GridCell<Object>> gridCells){
-		for(GridCell<Object> cell : gridCells) {
-			GridPoint point = cell.getPoint();
-			for(Object obj : grid.getObjectsAt(point.getX(), point.getY())) {
-				for(Class<? extends Object> preyCandidate : prey){
-					if(obj.getClass() == preyCandidate){
-						moveTowards(space.getLocation(obj));
-						eat(obj);
-						//Grass.grassCount--;
-						System.out.println(this+" eaten "+obj);
-						return true;
+	private boolean searchForFood(List<GridCell<Object>> gridCells){
+		if((long)RepastEssentials.GetTickCount() - lastEatTimeTick > eatInterval){
+			for(GridCell<Object> cell : gridCells) {
+				GridPoint point = cell.getPoint();
+				for(Object obj : grid.getObjectsAt(point.getX(), point.getY())) {
+					for(Class<? extends Object> preyCandidate : prey){
+						if(obj.getClass() == preyCandidate){
+							if(isAttackSuccesfull(obj)){
+								moveTowards(space.getLocation(obj));
+								eat(obj);
+								System.out.println(this+" eaten "+obj);
+								return true;
+							}
+							return false;
+						}
 					}
 				}
 			}
@@ -104,7 +118,42 @@ public abstract class Animal {
 		return false;
 	}
 	
-	public List<GridCell<Object>> getNeighborsPrey(int radius){
+	private boolean isAttackSuccesfull(Object obj){
+		if(obj instanceof Plant) return true;
+		Animal prey = (Animal) obj;
+		float predatorScore = 0.0f;
+		float preyScore = 0.0f;
+		for(Feature predatorFeature : combatFeatures){
+			predatorScore += predatorFeature.getEffectiveness();
+			List<String> effectiveAgainst = FeatureUtils.FEATURE_RELATIONS.get(predatorFeature.getName());
+			if(effectiveAgainst != null){
+				for(Feature preyFeature : prey.combatFeatures){
+					if(effectiveAgainst.contains(preyFeature.getName())){
+						predatorScore += predatorFeature.getEffectiveness();
+						break;
+					}
+				}
+			}
+		}
+		for(Feature preyFeature : prey.combatFeatures){
+			preyScore += preyFeature.getEffectiveness();
+			List<String> effectiveAgainst = FeatureUtils.FEATURE_RELATIONS.get(preyFeature.getName());
+			if(effectiveAgainst != null){
+				for(Feature predatorFeature : combatFeatures){
+					if(effectiveAgainst.contains(predatorFeature.getName())){
+						preyScore += preyFeature.getEffectiveness();
+						break;
+					}
+				}
+			}
+		}
+		predatorScore += predatorScore * Math.random();
+		preyScore += preyScore * Math.random();
+		if(predatorScore > preyScore) return true;
+		return false;
+	}
+	
+	private List<GridCell<Object>> getNeighborsPrey(int radius){
 		GridPoint pt = grid.getLocation(this);
 		GridCellNgh<Object> nghCreator = new GridCellNgh<Object>(grid, pt, Object.class, radius, radius);
 		List<GridCell<Object>> gridCells = nghCreator.getNeighborhood(true);
@@ -112,13 +161,13 @@ public abstract class Animal {
 		return gridCells;
 	}
 	
-	public void moveTowards(NdPoint pt) {
+	private void moveTowards(NdPoint pt) {
 		space.moveTo(this, pt.getX(), pt.getY());
 		grid.moveTo(this,(int)pt.getX(),(int)pt.getY());
 		stamina -= getSpeed();
 	}
 	
-	public void eat(Object obj){
+	private void eat(Object obj){
 		if(obj instanceof Plant){
 			Plant plant = (Plant) obj;
 			plant.decPlantsCount();
@@ -126,12 +175,13 @@ public abstract class Animal {
 		Context <Object> context = ContextUtils.getContext(obj);
 		context.remove(obj);
 		stamina = getMaxStamina();
-		health = getMaxHealth();
+		energy = getMaxEnergy();
+		lastEatTimeTick = (long) RepastEssentials.GetTickCount();
 	}
 	
-	public void reproduce(){
+	private void reproduce(){
 		long actualStep = (long) RepastEssentials.GetTickCount();
-		if((actualStep - lastReproduceTime >= getReproduceInterval()) && (health >= getReproduceEnergy())){
+		if((actualStep - lastReproduceTime >= getReproduceInterval()) && (energy >= getReproduceEnergy())){
 			List<GridCell<Object>> gridCells = getNeighbors(getReproduceRadius());
 			if(gridCells.size() > 0){
 				int children = RandomHelper.nextIntFromTo(1, getMaxChildren());
@@ -161,7 +211,7 @@ public abstract class Animal {
 		}
 	}
 	
-	public List<GridCell<Object>> getNeighbors(int radius){
+	private List<GridCell<Object>> getNeighbors(int radius){
 		GridPoint pt = grid.getLocation(this);
 		GridCellNgh<Object> nghCreator = new GridCellNgh<Object>(grid, pt, Object.class, radius, radius);
 		List<GridCell<Object>> gridCells = nghCreator.getNeighborhood(true);
@@ -179,10 +229,10 @@ public abstract class Animal {
 		return gridCellsFiltered;
 	}
 	
-	public void createChild(double posX, double posY) throws Exception {
+	private void createChild(double posX, double posY) throws Exception {
 		Context <Object> context = ContextUtils.getContext(this);
-		Constructor<?> ctor = self.getConstructor(ContinuousSpace.class, Grid.class);
-		Animal animal = (Animal) ctor.newInstance(new Object[] { space, grid });
+		Constructor<?> ctor = self.getConstructor(ContinuousSpace.class, Grid.class, List.class);
+		Animal animal = (Animal) ctor.newInstance(new Object[] { space, grid, combatFeatures });
 		animal.lastReproduceTime = (long) RepastEssentials.GetTickCount();
 		context.add(animal);
 		space.moveTo(animal, posX, posY);
@@ -192,6 +242,10 @@ public abstract class Animal {
 	@Override
 	public String toString(){
 		return "Animal: "+ID;
+	}
+	
+	public void setCombatFeatures(List<Feature> combatFeatures){
+		this.combatFeatures = combatFeatures;
 	}
 
 }

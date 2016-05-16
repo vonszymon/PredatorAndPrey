@@ -14,7 +14,7 @@ public class Lichen extends Plant {
 	
 	public Lichen(ContinuousSpace<Object> space, Grid<Object> grid) {
 		super(space, grid, Lichen.class, LICHEN_COUNT);
-		this.reproduceInterval = RandomHelper.nextIntFromTo(7,10);
+		this.reproduceInterval = RandomHelper.nextIntFromTo(10,15);
 		LICHEN_COUNT++;
 	}
 	

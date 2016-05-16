@@ -7,16 +7,7 @@
 # eclipse specific git ignore
 bin/**
 local.properties
-.classpath
-.settings/
 .loadpath
 
 # External tool builders
 .externalToolBuilders/
-
-ModelOutput*.txt
-velocity.log
-debug.log
-# Settings Files #
-Repast.settings
-hosts.xml

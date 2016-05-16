@@ -1,5 +1,7 @@
 package predatorPrey;
 
+import java.util.List;
+
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
 
@@ -9,13 +11,15 @@ public class Caribou extends Animal {
 	
 	public static long CARIBOU_COUNT = 0;
 	
-	private static int MAX_HEALTH = 30;
+	private static int MAX_ENERGY = 30;
 	
 	private static int MAX_STAMINA = 10;
 	
-	private static int REPRODUCE_ENERGY = MAX_HEALTH / 2;
+	private static int REPRODUCE_ENERGY = MAX_ENERGY / 2;
 	
 	private static int SPEED = 2;
+	
+	private static int STAMINA_LOSS = SPEED;
 	
 	private static int REPRODUCE_INTERVAL = 15;
 	
@@ -23,8 +27,9 @@ public class Caribou extends Animal {
 	
 	private static Class<? extends Object> initialPrey = Lichen.class;
 	
-	public Caribou(ContinuousSpace<Object>space, Grid<Object> grid) {
+	public Caribou(ContinuousSpace<Object>space, Grid<Object> grid, List<Feature> combatFeatures) {
 		super(space, grid, Caribou.class, initialPrey, CARIBOU_COUNT);
+		setCombatFeatures(combatFeatures);
 		CARIBOU_COUNT++;
 	}
 	
@@ -39,8 +44,8 @@ public class Caribou extends Animal {
 	}
 
 	@Override
-	public int getMaxHealth() {
-		return MAX_HEALTH;
+	public int getMaxEnergy() {
+		return MAX_ENERGY;
 	}
 
 	@Override
@@ -66,5 +71,10 @@ public class Caribou extends Animal {
 	@Override
 	public int getMaxChildren() {
 		return MAX_CHILDREN;
+	}
+
+	@Override
+	public int getStaminaLoss() {
+		return STAMINA_LOSS;
 	}
 }
