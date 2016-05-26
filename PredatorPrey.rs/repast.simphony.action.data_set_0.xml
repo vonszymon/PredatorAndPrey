@@ -1,0 +1,85 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Agent Count</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-32326882</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map"/>
+  <countSources class="linked-hash-map">
+    <entry>
+      <string>Leopard Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Leopard</typeName>
+        <id>Leopard Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Antelope Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Antelope</typeName>
+        <id>Antelope Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Grass Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Grass</typeName>
+        <id>Grass Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Wolf Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Wolf</typeName>
+        <id>Wolf Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Caribou Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Caribou</typeName>
+        <id>Caribou Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Lichen Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Lichen</typeName>
+        <id>Lichen Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Fox Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Fox</typeName>
+        <id>Fox Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Rabbit Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Rabbit</typeName>
+        <id>Rabbit Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Carrot Count</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>predatorPrey.Carrot</typeName>
+        <id>Carrot Count</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+  </countSources>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

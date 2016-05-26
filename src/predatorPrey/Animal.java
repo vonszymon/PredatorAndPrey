@@ -17,6 +17,7 @@ import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.util.SimUtilities;
+import repast.simphony.util.collections.IndexedIterable;
 
 public abstract class Animal {
 
@@ -34,7 +35,7 @@ public abstract class Animal {
 	
 	private long lastEatTimeTick = 0;
 	
-	private long eatInterval = 3;
+	private long eatInterval = 5;
 	
 	private List<Class<? extends Object>> prey;
 	
@@ -46,23 +47,92 @@ public abstract class Animal {
 	
 	public abstract int getReproduceRadius();
 	
-	public abstract int getMaxEnergy();
+	public abstract int getDefaultMaxEnergy();
 	
-	public abstract int getMaxStamina();
+	public abstract int getDefaultMaxStamina();
 	
-	public abstract int getReproduceEnergy();
+	public abstract int getDefaultReproduceEnergy();
 	
-	public abstract int getSpeed();
+	public abstract int getDefaultSpeed();
 	
-	public abstract int getStaminaLoss();
+	public abstract int getDefaultStaminaLoss();
 	
-	public abstract int getReproduceInterval();
+	public abstract int getDefaultReproduceInterval();
 	
-	public abstract int getMaxChildren();
+	public abstract int getDefaultMaxChildren();
 	
-	public Animal(ContinuousSpace<Object> space, Grid<Object> grid, Class<? extends Animal> self, Class<? extends Object> prey, long ID){
+	public abstract boolean getIsToEvolve();
+	
+	public abstract void setIsToEvolve(boolean value);
+	
+	public abstract int getEvolveTimeOffset();
+	
+	public abstract int getLastEvolutionAnimalCount();
+	
+	public abstract void setLastEvolutionAnimalCount(int value);
+	
+	public int getMaxEnergy(){
+		for(Feature feature : attributeFeatures){
+			if(feature.getName().equals("MaxEnergyUp")){
+				return (int) (getDefaultMaxEnergy() * (1.0 + feature.getEffectiveness()));
+			}
+		}
+		return getDefaultMaxEnergy();
+	}
+	
+	public int getMaxStamina(){
+		for(Feature feature : attributeFeatures){
+			if(feature.getName().equals("MaxStaminaUp")){
+				return (int) (getDefaultMaxStamina() * (1.0 + feature.getEffectiveness()));
+			}
+		}
+		return getDefaultMaxStamina();
+	}
+	
+	public int getReproduceEnergy(){
+		for(Feature feature : attributeFeatures){
+			if(feature.getName().equals("ReproduceEnergyDown")){
+				return (int) (getDefaultReproduceEnergy() * (1.0 - feature.getEffectiveness()));
+			}
+		}
+		return getDefaultReproduceEnergy();
+	}
+	
+	public int getSpeed(){
+		for(Feature feature : attributeFeatures){
+			if(feature.getName().equals("SpeedUp")){
+				return (int) (getDefaultSpeed() * (1.0 + feature.getEffectiveness()) + 0.5);
+			}
+		}
+		return getDefaultSpeed();
+	}
+	
+	public int getStaminaLoss(){
+		return getDefaultStaminaLoss();
+	}
+	
+	public int getReproduceInterval(){
+		for(Feature feature : attributeFeatures){
+			if(feature.getName().equals("ReproduceIntervalDown")){
+				return (int) (getDefaultReproduceInterval() * (1.0 - (feature.getEffectiveness() / 2.0)));
+			}
+		}
+		return getDefaultReproduceInterval();
+	}
+	
+	public int getMaxChildren(){
+		for(Feature feature : attributeFeatures){
+			if(feature.getName().equals("MaxChildrenUp")){
+				return (int) (getDefaultMaxChildren() * (1.0 + feature.getEffectiveness()) + 0.5);
+			}
+		}
+		return getDefaultMaxChildren();
+	}
+	
+	public Animal(ContinuousSpace<Object> space, Grid<Object> grid, Class<? extends Animal> self, Class<? extends Object> prey, long ID, List<Feature> attributeFeatures){
 		this.space = space;
 		this.grid = grid;
+		this.attributeFeatures = attributeFeatures;
 		this.energy = getMaxEnergy();
 		this.stamina = getMaxStamina();
 		this.prey = new ArrayList<Class<? extends Object>>();
@@ -80,8 +150,12 @@ public abstract class Animal {
 			System.out.println(this+" died from starvation");
 		} else {
 			int speed = getSpeed();
-			if(stamina - getStaminaLoss() <= 0){
-				stamina = getMaxStamina();
+			int staminaAfter = stamina - getStaminaLoss();
+			if(staminaAfter <= 0){
+				stamina = staminaAfter;
+				if(stamina <= -2){
+					stamina = getMaxStamina();
+				}
 			} else {
 				List<GridCell<Object>> gridCells = getNeighborsPrey(speed);
 				boolean eaten = searchForFood(gridCells);
@@ -94,6 +168,7 @@ public abstract class Animal {
 				reproduce();
 			}
 		}
+		isToEvolve();
 	}
 	
 	private boolean searchForFood(List<GridCell<Object>> gridCells){
@@ -164,7 +239,7 @@ public abstract class Animal {
 	private void moveTowards(NdPoint pt) {
 		space.moveTo(this, pt.getX(), pt.getY());
 		grid.moveTo(this,(int)pt.getX(),(int)pt.getY());
-		stamina -= getSpeed();
+		stamina -= getStaminaLoss();
 	}
 	
 	private void eat(Object obj){
@@ -183,7 +258,8 @@ public abstract class Animal {
 		long actualStep = (long) RepastEssentials.GetTickCount();
 		if((actualStep - lastReproduceTime >= getReproduceInterval()) && (energy >= getReproduceEnergy())){
 			List<GridCell<Object>> gridCells = getNeighbors(getReproduceRadius());
-			if(gridCells.size() > 0){
+			Animal partner = getReproducePartner(gridCells, actualStep);
+			if(partner != null){
 				int children = RandomHelper.nextIntFromTo(1, getMaxChildren());
 				for(int i = 0; i < children; i++){
 					double deltaX = RandomHelper.nextDoubleFromTo(-2.0, 2.0);
@@ -195,20 +271,26 @@ public abstract class Animal {
 						e.printStackTrace();
 					}
 				}
-				lastReproduceTime = actualStep;
-				for(GridCell<Object> cell : gridCells) {
-					GridPoint point = cell.getPoint();
-					for(Object obj : grid.getObjectsAt(point.getX(), point.getY())) {
-						if(obj.getClass() == self){
-							Animal partner =  (Animal) obj;
-							partner.lastReproduceTime = actualStep;
-							System.out.println(this+" and "+partner+" produced "+children+" children");
-							return;
-						}
+				this.lastReproduceTime = actualStep;
+				partner.lastReproduceTime = actualStep;
+				System.out.println(this+" and "+partner+" produced "+children+" children");
+			}
+		}	
+	}
+	
+	private Animal getReproducePartner(List<GridCell<Object>> gridCells, long actualStep){
+		for(GridCell<Object> cell : gridCells) {
+			GridPoint point = cell.getPoint();
+			for(Object obj : grid.getObjectsAt(point.getX(), point.getY())) {
+				if(obj.getClass() == self){
+					Animal partner =  (Animal) obj;
+					if(actualStep - partner.lastReproduceTime >= getReproduceInterval()){
+						return partner;
 					}
 				}
-			}	
+			}
 		}
+		return null;
 	}
 	
 	private List<GridCell<Object>> getNeighbors(int radius){
@@ -231,12 +313,170 @@ public abstract class Animal {
 	
 	private void createChild(double posX, double posY) throws Exception {
 		Context <Object> context = ContextUtils.getContext(this);
-		Constructor<?> ctor = self.getConstructor(ContinuousSpace.class, Grid.class, List.class);
-		Animal animal = (Animal) ctor.newInstance(new Object[] { space, grid, combatFeatures });
+		Constructor<?> ctor = self.getConstructor(ContinuousSpace.class, Grid.class, List.class, List.class);
+		Animal animal = (Animal) ctor.newInstance(new Object[] { space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures) });
 		animal.lastReproduceTime = (long) RepastEssentials.GetTickCount();
 		context.add(animal);
 		space.moveTo(animal, posX, posY);
 		grid.moveTo(animal, (int)posX, (int)posY);
+	}
+	
+	private void isToEvolve(){
+		if(((long)RepastEssentials.GetTickCount() + getEvolveTimeOffset() + 2) % 40 == 0){
+			if(getIsToEvolve()){
+				Context<Object> context = ContextUtils.getContext(this);
+				IndexedIterable<Object> objects = null;
+				if(context != null && self != null){
+					objects = context.getObjects(self);
+					if(getLastEvolutionAnimalCount() > objects.size()){
+						int preyCount = 0;
+						for(Class<? extends Object> type: prey){
+							preyCount += context.getObjects(type).size();
+						}
+						if(preyCount * 2 < objects.size()){
+							Class<? extends Object> candidate = null;
+							int candidateCount = 0;
+							for(Class<? extends Object> type: FeatureUtils.AGENT_TYPES){
+								if(prey.contains(type) || self.equals(type)) continue;
+								int count = context.getObjects(type).size();
+								if(count > candidateCount){
+									candidateCount = count;
+									candidate = type;
+								}
+							}
+							if(candidate != null){
+								if(RandomHelper.nextIntFromTo(0, 1) == 0){
+									int removePreyIndex = RandomHelper.nextIntFromTo(0, prey.size() - 1);
+									Class<? extends Object> removed = null;
+									for(Object object : objects){
+										Animal animal = (Animal) object;
+										removed = animal.prey.remove(removePreyIndex);
+										animal.prey.add(candidate);
+									}
+									System.out.println(this+" removed possible prey: "+removed.getSimpleName());
+									System.out.println(this+" acquired possible prey: "+candidate.getSimpleName());
+								} else {
+									if(removeFeature(objects, false)){
+										for(Object object : objects){
+											Animal animal = (Animal) object;
+											animal.prey.add(candidate);
+										}
+										System.out.println(this+" acquired possible prey: "+candidate.getSimpleName());
+									}
+								}
+							}
+						} else {
+							if(removeFeature(objects, true)){
+								addFeature(objects);
+							}
+						}
+					}
+				}
+				setIsToEvolve(false);
+				if(objects != null) setLastEvolutionAnimalCount(objects.size());
+			}
+		} else {
+			setIsToEvolve(true);
+		}
+	}
+	
+	private boolean removeFeature(IndexedIterable<Object> objects, boolean removablePrey){
+		if(removablePrey){
+			if(RandomHelper.nextIntFromTo(0, 100) > 90){
+				if(prey.size() > 1){
+					int preyIndex = RandomHelper.nextIntFromTo(0, prey.size() - 1);
+					Class<? extends Object> removed = null;
+					for(Object object : objects){
+						Animal animal = (Animal) object;
+						removed = animal.prey.remove(preyIndex);
+					}
+					System.out.println(this+" removed possible prey: "+removed.getSimpleName());
+					return true;
+				}
+			}
+		}
+		if(RandomHelper.nextIntFromTo(0, 1) == 0){
+			if(attributeFeatures.size() > 1){
+				int attributeFeaturesIndex = RandomHelper.nextIntFromTo(0, attributeFeatures.size() - 1);
+				Feature feature = null;
+				for(Object object : objects){
+					Animal animal = (Animal) object;
+					feature = animal.attributeFeatures.remove(attributeFeaturesIndex);
+				}
+				System.out.println(this+" removed attribute feature: "+feature.getName());
+				return true;
+			}
+		}
+		if(combatFeatures.size() > 1){
+			int combatFeaturesIndex = RandomHelper.nextIntFromTo(0, combatFeatures.size() - 1);
+			Feature feature = null;
+			for(Object object : objects){
+				Animal animal = (Animal) object;
+				feature = animal.combatFeatures.remove(combatFeaturesIndex);
+			}
+			System.out.println(this+" removed combat feature: "+feature.getName());
+			return true;
+		} else {
+			if(attributeFeatures.size() > 1){
+				int attributeFeaturesIndex = RandomHelper.nextIntFromTo(0, attributeFeatures.size() - 1);
+				Feature feature = null;
+				for(Object object : objects){
+					Animal animal = (Animal) object;
+					feature = animal.attributeFeatures.remove(attributeFeaturesIndex);
+				}
+				System.out.println(this+" removed attribute feature: "+feature.getName());
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void addFeature(IndexedIterable<Object> objects){
+		String featureName = null;
+		boolean exists = false;
+		if(RandomHelper.nextIntFromTo(0, 1) == 0){
+			while(!exists){
+				int index = RandomHelper.nextIntFromTo(0, FeatureUtils.ATTRIBUTE_FEATURE_NAMES.size() - 1);
+				for(Feature feature : attributeFeatures){
+					if(feature.getName().equals(FeatureUtils.ATTRIBUTE_FEATURE_NAMES.get(index))){
+						exists = true;
+						break;
+					}
+				}
+				if(exists == false){
+					featureName = FeatureUtils.ATTRIBUTE_FEATURE_NAMES.get(index);
+					exists = true;
+				} else {
+					exists = false;
+				}
+			}
+			for(Object object : objects){
+				Animal animal = (Animal) object;
+				animal.attributeFeatures.add(new Feature(featureName, (float) RandomHelper.nextDoubleFromTo(0.0, 1.0) ));
+			}
+			System.out.println(this+" added attribute feature: "+featureName);
+		} else {
+			while(!exists){
+				int index = RandomHelper.nextIntFromTo(0, FeatureUtils.COMBAT_FEATURE_NAMES.size() - 1);
+				for(Feature feature : attributeFeatures){
+					if(feature.getName().equals(FeatureUtils.COMBAT_FEATURE_NAMES.get(index))){
+						exists = true;
+						break;
+					}
+				}
+				if(exists == false){
+					featureName = FeatureUtils.COMBAT_FEATURE_NAMES.get(index);
+					exists = true;
+				} else {
+					exists = false;
+				}
+			}
+			for(Object object : objects){
+				Animal animal = (Animal) object;
+				animal.combatFeatures.add(new Feature(featureName, (float) RandomHelper.nextDoubleFromTo(0.0, 1.0) ));
+			}
+			System.out.println(this+" added combat feature: "+featureName);
+		}
 	}
 	
 	@Override

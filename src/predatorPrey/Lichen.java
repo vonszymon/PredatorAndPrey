@@ -6,7 +6,7 @@ import repast.simphony.space.grid.Grid;
 
 public class Lichen extends Plant { 
 	
-	private static int MAX_LICHEN = 4000;
+	private static int MAX_LICHEN = 1000;
 	
 	public static long LICHEN_COUNT = 0;
 	
@@ -14,7 +14,7 @@ public class Lichen extends Plant {
 	
 	public Lichen(ContinuousSpace<Object> space, Grid<Object> grid) {
 		super(space, grid, Lichen.class, LICHEN_COUNT);
-		this.reproduceInterval = RandomHelper.nextIntFromTo(10,15);
+		this.reproduceInterval = RandomHelper.nextIntFromTo(8,13);
 		LICHEN_COUNT++;
 	}
 	

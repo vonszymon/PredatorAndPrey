@@ -6,7 +6,7 @@ import repast.simphony.space.grid.Grid;
 
 public class Grass extends Plant { 
 	
-	private static int MAX_GRASS = 4000;
+	private static int MAX_GRASS = 1000;
 	
 	public static long GRASS_COUNT = 0;
 	
@@ -14,7 +14,7 @@ public class Grass extends Plant {
 	
 	public Grass(ContinuousSpace<Object> space, Grid<Object> grid) {
 		super(space, grid, Grass.class, GRASS_COUNT);
-		this.reproduceInterval = RandomHelper.nextIntFromTo(10,15);
+		this.reproduceInterval = RandomHelper.nextIntFromTo(8,13);
 		GRASS_COUNT++;
 	}
 	

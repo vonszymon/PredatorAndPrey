@@ -1,6 +1,7 @@
 package predatorPrey;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import repast.simphony.context.Context;
@@ -33,44 +34,56 @@ public class EnvBuilder implements ContextBuilder<Object>{
 		Grid<Object> grid = gridFactory.createGrid("grid", context, new GridBuilderParameters<Object>(new WrapAroundBorders(), 
 				new SimpleGridAdder<Object>(), true, 100, 100));
 		int leopardCount = 75;
+		Leopard.lastEvolutionAnimalCount = leopardCount;
 		List<Feature> combatFeatures = Arrays.asList(new Feature("Poison", 0.5f), new Feature("LongClaws", 0.5f));
+		List<Feature> attributeFeatures = Arrays.asList(new Feature("SpeedUp", 0.5f), new Feature("MaxEnergyUp", 0.5f));
 		for (int i = 0; i < leopardCount ; i++) {
-			context.add(new Leopard(space, grid, combatFeatures));
+			context.add(new Leopard(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}
-		int antelopeCount = 300;
+		int antelopeCount = 500;
+		Antelope.lastEvolutionAnimalCount = antelopeCount;
 		combatFeatures = Arrays.asList(new Feature("Stench", 0.5f), new Feature("Armor", 0.5f));
+		attributeFeatures = Arrays.asList(new Feature("ReproduceEnergyDown", 0.5f), new Feature("MaxEnergyUp", 0.5f));
 		for(int i = 0; i < antelopeCount; i++) {
-			context.add(new Antelope(space, grid, combatFeatures));
+			context.add(new Antelope(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}
-		int grassCount = 900;
+		int grassCount = 1000;
 		for(int i = 0; i < grassCount; i++) {
 			context.add(new Grass(space, grid));
 		}
 		int wolfCount = 75;
+		Wolf.lastEvolutionAnimalCount = wolfCount;
 		combatFeatures = Arrays.asList(new Feature("Web", 0.5f), new Feature("Paralysis", 0.5f));
+		attributeFeatures = Arrays.asList(new Feature("ReproduceIntervalDown", 0.5f), new Feature("MaxChildrenUp", 0.5f));
 		for (int i = 0; i < wolfCount ; i++) {
-			context.add(new Wolf(space, grid, combatFeatures));
+			context.add(new Wolf(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}
-		int caribouCount = 300;
+		int caribouCount = 500;
+		Caribou.lastEvolutionAnimalCount = caribouCount;
 		combatFeatures = Arrays.asList(new Feature("Horns", 0.5f), new Feature("Camouflage", 0.5f));
+		attributeFeatures = Arrays.asList(new Feature("SpeedUp", 0.5f), new Feature("MaxChildrenUp", 0.5f));
 		for(int i = 0; i < caribouCount; i++) {
-			context.add(new Caribou(space, grid, combatFeatures));
+			context.add(new Caribou(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}
-		int lichenCount = 900;
+		int lichenCount = 1000;
 		for(int i = 0; i < lichenCount; i++) {
 			context.add(new Lichen(space, grid));
 		}
 		int foxCount = 75;
+		Fox.lastEvolutionAnimalCount = foxCount;
 		combatFeatures = Arrays.asList(new Feature("SharpTooth", 0.5f), new Feature("LongClaws", 0.5f));
+		attributeFeatures = Arrays.asList(new Feature("MaxEnergyUp", 0.5f), new Feature("ReproduceIntervalDown", 0.5f));
 		for (int i = 0; i < foxCount ; i++) {
-			context.add(new Fox(space, grid, combatFeatures));
+			context.add(new Fox(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}
-		int rabbitCount = 300;
+		int rabbitCount = 500;
+		Rabbit.lastEvolutionAnimalCount = rabbitCount;
 		combatFeatures = Arrays.asList(new Feature("ScaryBody", 0.5f), new Feature("Poison", 0.5f));
+		attributeFeatures = Arrays.asList(new Feature("MaxStaminaUp", 0.5f), new Feature("ReproduceEnergyDown", 0.5f));
 		for(int i = 0; i < rabbitCount; i++) {
-			context.add(new Rabbit(space, grid, combatFeatures));
+			context.add(new Rabbit(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}
-		int carrotCount = 900;
+		int carrotCount = 1000;
 		for(int i = 0; i < carrotCount; i++) {
 			context.add(new Carrot(space, grid));
 		}

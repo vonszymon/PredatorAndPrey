@@ -11,7 +11,7 @@ public class Rabbit extends Animal {
 	
 	public static long RABBIT_COUNT = 0;
 	
-	private static int MAX_ENERGY = 30;
+	private static int MAX_ENERGY = 20;
 	
 	private static int MAX_STAMINA = 10;
 	
@@ -27,8 +27,14 @@ public class Rabbit extends Animal {
 	
 	private static Class<? extends Object> initialPrey = Carrot.class;
 	
-	public Rabbit(ContinuousSpace<Object>space, Grid<Object> grid, List<Feature> combatFeatures) {
-		super(space, grid, Rabbit.class, initialPrey, RABBIT_COUNT);
+	private static boolean isToEvolve = true;
+	
+	private static int evolveTimeOffset = 25;
+	
+	public static int lastEvolutionAnimalCount; 
+	
+	public Rabbit(ContinuousSpace<Object>space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures) {
+		super(space, grid, Rabbit.class, initialPrey, RABBIT_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
 		RABBIT_COUNT++;
 	}
@@ -44,37 +50,63 @@ public class Rabbit extends Animal {
 	}
 
 	@Override
-	public int getMaxEnergy() {
+	public int getDefaultMaxEnergy() {
 		return MAX_ENERGY;
 	}
 
 	@Override
-	public int getMaxStamina() {
+	public int getDefaultMaxStamina() {
 		return MAX_STAMINA;
 	}
 
 	@Override
-	public int getReproduceEnergy() {
+	public int getDefaultReproduceEnergy() {
 		return REPRODUCE_ENERGY;
 	}
 
 	@Override
-	public int getSpeed() {
+	public int getDefaultSpeed() {
 		return SPEED;
 	}
 
 	@Override
-	public int getReproduceInterval() {
+	public int getDefaultReproduceInterval() {
 		return REPRODUCE_INTERVAL;
 	}
 
 	@Override
-	public int getMaxChildren() {
+	public int getDefaultMaxChildren() {
 		return MAX_CHILDREN;
 	}
 
 	@Override
-	public int getStaminaLoss() {
+	public int getDefaultStaminaLoss() {
 		return STAMINA_LOSS;
+	}
+	
+
+	@Override
+	public boolean getIsToEvolve() {
+		return isToEvolve;
+	}
+
+	@Override
+	public void setIsToEvolve(boolean value) {
+		isToEvolve = value;		
+	}
+	
+	@Override
+	public int getEvolveTimeOffset() {
+		return evolveTimeOffset;
+	}
+	
+	@Override
+	public int getLastEvolutionAnimalCount() {
+		return lastEvolutionAnimalCount;
+	}
+
+	@Override
+	public void setLastEvolutionAnimalCount(int value) {
+		lastEvolutionAnimalCount = value;
 	}
 }

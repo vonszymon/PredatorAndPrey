@@ -11,7 +11,7 @@ public class Wolf extends Animal {
 	
 	public static long WOLF_COUNT = 0;
 	
-	private static int MAX_ENERGY = 30;
+	private static int MAX_ENERGY = 20;
 	
 	private static int MAX_STAMINA = 10;
 	
@@ -21,14 +21,20 @@ public class Wolf extends Animal {
 	
 	private static int STAMINA_LOSS = SPEED;
 	
-	private static int REPRODUCE_INTERVAL = 40;
+	private static int REPRODUCE_INTERVAL = 35;
 	
-	private static int MAX_CHILDREN = 3;
+	private static int MAX_CHILDREN = 2;
 	
 	private static Class<? extends Object> initialPrey = Caribou.class;
 	
-	public Wolf(ContinuousSpace<Object> space, Grid<Object> grid, List<Feature> combatFeatures){
-		super(space, grid, Wolf.class, initialPrey, WOLF_COUNT);
+	private static boolean isToEvolve = true;
+	
+	private static int evolveTimeOffset = 30;
+	
+	public static int lastEvolutionAnimalCount; 
+	
+	public Wolf(ContinuousSpace<Object> space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures){
+		super(space, grid, Wolf.class, initialPrey, WOLF_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
 		WOLF_COUNT++;
 	}
@@ -44,37 +50,63 @@ public class Wolf extends Animal {
 	}
 
 	@Override
-	public int getMaxEnergy() {
+	public int getDefaultMaxEnergy() {
 		return MAX_ENERGY;
 	}
 
 	@Override
-	public int getMaxStamina() {
+	public int getDefaultMaxStamina() {
 		return MAX_STAMINA;
 	}
 
 	@Override
-	public int getReproduceEnergy() {
+	public int getDefaultReproduceEnergy() {
 		return REPRODUCE_ENERGY;
 	}
 
 	@Override
-	public int getSpeed() {
+	public int getDefaultSpeed() {
 		return SPEED;
 	}
 
 	@Override
-	public int getReproduceInterval() {
+	public int getDefaultReproduceInterval() {
 		return REPRODUCE_INTERVAL;
 	}
 
 	@Override
-	public int getMaxChildren() {
+	public int getDefaultMaxChildren() {
 		return MAX_CHILDREN;
 	}
 
 	@Override
-	public int getStaminaLoss() {
+	public int getDefaultStaminaLoss() {
 		return STAMINA_LOSS;
+	}
+	
+
+	@Override
+	public boolean getIsToEvolve() {
+		return isToEvolve;
+	}
+
+	@Override
+	public void setIsToEvolve(boolean value) {
+		isToEvolve = value;		
+	}
+	
+	@Override
+	public int getEvolveTimeOffset() {
+		return evolveTimeOffset;
+	}
+	
+	@Override
+	public int getLastEvolutionAnimalCount() {
+		return lastEvolutionAnimalCount;
+	}
+
+	@Override
+	public void setLastEvolutionAnimalCount(int value) {
+		lastEvolutionAnimalCount = value;
 	}
 }

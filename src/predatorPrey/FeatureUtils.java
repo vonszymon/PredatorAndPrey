@@ -13,11 +13,15 @@ public class FeatureUtils {
 	
     public static final Map<String, List<String>> FEATURE_RELATIONS;
     
+    public static final List<Class<? extends Object>> AGENT_TYPES;
+    
     static
     {	
+    	AGENT_TYPES = Arrays.asList(Antelope.class, Caribou.class, Carrot.class, Fox.class, Grass.class, Leopard.class, Lichen.class, Rabbit.class, Wolf.class);
+    	
     	COMBAT_FEATURE_NAMES = Arrays.asList("Poison", "LongClaws", "Stench", "Web", "Paralysis", "SharpTooth", "Armor", "Horns", "Camouflage", "ScaryBody");
     	
-    	ATTRIBUTE_FEATURE_NAMES = Arrays.asList("SpeedUp", "MaxEnergyUp", "MaxStaminaUp", "ReproduceEnergyDown", "StaminaLossDown", "ReproduceIntervalDown", "MaxChildrenUp");
+    	ATTRIBUTE_FEATURE_NAMES = Arrays.asList("SpeedUp", "MaxEnergyUp", "MaxStaminaUp", "ReproduceEnergyDown", "ReproduceIntervalDown", "MaxChildrenUp");
     	
     	FEATURE_RELATIONS = new HashMap<String, List<String>>();
     	
