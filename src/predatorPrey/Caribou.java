@@ -36,6 +36,7 @@ public class Caribou extends Animal {
 	public Caribou(ContinuousSpace<Object>space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures) {
 		super(space, grid, Caribou.class, initialPrey, CARIBOU_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
+		if(this.ID == 0) logDataToFile();
 		CARIBOU_COUNT++;
 	}
 	

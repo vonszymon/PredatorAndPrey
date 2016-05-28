@@ -1,11 +1,15 @@
 package predatorPrey;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FeatureUtils {
+	
+	public static PrintWriter LOGGER;
 	
 	public static final List<String> COMBAT_FEATURE_NAMES;
 	
@@ -17,6 +21,14 @@ public class FeatureUtils {
     
     static
     {	
+    	try {
+			LOGGER = new PrintWriter("log/agent_data.log");
+			LOGGER.println(String.format("%-10s %-10s %-30s %-70s %-70s", "Step", "Species", "Prey", "AttributeFeatures", "CombatFeatures"));
+			LOGGER.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+    	
     	AGENT_TYPES = Arrays.asList(Antelope.class, Caribou.class, Carrot.class, Fox.class, Grass.class, Leopard.class, Lichen.class, Rabbit.class, Wolf.class);
     	
     	COMBAT_FEATURE_NAMES = Arrays.asList("Poison", "LongClaws", "Stench", "Web", "Paralysis", "SharpTooth", "Armor", "Horns", "Camouflage", "ScaryBody");

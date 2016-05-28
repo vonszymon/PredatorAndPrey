@@ -36,6 +36,7 @@ public class Antelope extends Animal {
 	public Antelope(ContinuousSpace<Object>space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures) {
 		super(space, grid, Antelope.class, initialPrey, ANTELOPE_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
+		if(this.ID == 0) logDataToFile();
 		ANTELOPE_COUNT++;
 	}
 	

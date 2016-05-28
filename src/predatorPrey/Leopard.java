@@ -11,7 +11,7 @@ public class Leopard extends Animal {
 	
 	public static long LEOPARD_COUNT = 0;
 	
-	private static int MAX_ENERGY = 20;
+	private static int MAX_ENERGY = 25;
 	
 	private static int MAX_STAMINA = 10;
 	
@@ -36,6 +36,7 @@ public class Leopard extends Animal {
 	public Leopard(ContinuousSpace<Object> space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures){
 		super(space, grid, Leopard.class, initialPrey, LEOPARD_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
+		if(this.ID == 0) logDataToFile();
 		LEOPARD_COUNT++;
 	}
 

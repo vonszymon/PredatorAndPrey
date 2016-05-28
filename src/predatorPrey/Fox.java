@@ -11,7 +11,7 @@ public class Fox extends Animal {
 	
 	public static long FOX_COUNT = 0;
 	
-	private static int MAX_ENERGY = 20;
+	private static int MAX_ENERGY = 25;
 	
 	private static int MAX_STAMINA = 10;
 	
@@ -36,6 +36,7 @@ public class Fox extends Animal {
 	public Fox(ContinuousSpace<Object> space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures){
 		super(space, grid, Fox.class, initialPrey, FOX_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
+		if(this.ID == 0) logDataToFile();
 		FOX_COUNT++;
 	}
 

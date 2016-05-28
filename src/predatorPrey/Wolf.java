@@ -11,7 +11,7 @@ public class Wolf extends Animal {
 	
 	public static long WOLF_COUNT = 0;
 	
-	private static int MAX_ENERGY = 20;
+	private static int MAX_ENERGY = 25;
 	
 	private static int MAX_STAMINA = 10;
 	
@@ -36,6 +36,7 @@ public class Wolf extends Animal {
 	public Wolf(ContinuousSpace<Object> space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures){
 		super(space, grid, Wolf.class, initialPrey, WOLF_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
+		if(this.ID == 0) logDataToFile();
 		WOLF_COUNT++;
 	}
 

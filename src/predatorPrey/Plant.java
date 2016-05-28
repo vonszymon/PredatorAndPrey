@@ -42,18 +42,21 @@ public abstract class Plant {
 		if((((long) RepastEssentials.GetTickCount()) % getReproduceInterval() == 0) && (getPlantsCount() < getMaxPlants())){
 			Context <Object> context = ContextUtils.getContext(this);
 			Constructor<?> ctor;
-			Plant plant = null; 
-			try {
-				ctor = self.getConstructor(ContinuousSpace.class, Grid.class);
-				plant = (Plant) ctor.newInstance(new Object[] { space, grid });
-			} catch (Exception e) {
-				e.printStackTrace();
+			int children = RandomHelper.nextIntFromTo(1, 7);
+			for(int i=0; i< children; i++){
+				Plant plant = null; 
+				try {
+					ctor = self.getConstructor(ContinuousSpace.class, Grid.class);
+					plant = (Plant) ctor.newInstance(new Object[] { space, grid });
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				double posX = RandomHelper.nextDoubleFromTo(0.0, space.getDimensions().getWidth());
+				double posY = RandomHelper.nextDoubleFromTo(0.0, space.getDimensions().getHeight());
+				context.add(plant);
+				space.moveTo(plant, posX, posY);
+				grid.moveTo(plant, (int)posX, (int)posY);
 			}
-			double posX = RandomHelper.nextDoubleFromTo(0.0, space.getDimensions().getWidth());
-			double posY = RandomHelper.nextDoubleFromTo(0.0, space.getDimensions().getHeight());
-			context.add(plant);
-			space.moveTo(plant, posX, posY);
-			grid.moveTo(plant, (int)posX, (int)posY);
 		}
 	}
 	

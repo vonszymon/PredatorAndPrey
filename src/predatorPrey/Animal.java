@@ -35,7 +35,7 @@ public abstract class Animal {
 	
 	private long lastEatTimeTick = 0;
 	
-	private long eatInterval = 5;
+	private long eatInterval = 7;
 	
 	private List<Class<? extends Object>> prey;
 	
@@ -74,7 +74,7 @@ public abstract class Animal {
 	public int getMaxEnergy(){
 		for(Feature feature : attributeFeatures){
 			if(feature.getName().equals("MaxEnergyUp")){
-				return (int) (getDefaultMaxEnergy() * (1.0 + feature.getEffectiveness()));
+				return (int) (getDefaultMaxEnergy() * (1.0 + (feature.getEffectiveness() / 1.3)));
 			}
 		}
 		return getDefaultMaxEnergy();
@@ -222,7 +222,7 @@ public abstract class Animal {
 				}
 			}
 		}
-		predatorScore += predatorScore * Math.random();
+		predatorScore += predatorScore * Math.random() / 2.0;
 		preyScore += preyScore * Math.random();
 		if(predatorScore > preyScore) return true;
 		return false;
@@ -322,7 +322,7 @@ public abstract class Animal {
 	}
 	
 	private void isToEvolve(){
-		if(((long)RepastEssentials.GetTickCount() + getEvolveTimeOffset() + 2) % 40 == 0){
+		if(((long)RepastEssentials.GetTickCount() + getEvolveTimeOffset() + 2) % 35 == 0){
 			if(getIsToEvolve()){
 				Context<Object> context = ContextUtils.getContext(this);
 				IndexedIterable<Object> objects = null;
@@ -355,6 +355,7 @@ public abstract class Animal {
 									}
 									System.out.println(this+" removed possible prey: "+removed.getSimpleName());
 									System.out.println(this+" acquired possible prey: "+candidate.getSimpleName());
+									logDataToFile();
 								} else {
 									if(removeFeature(objects, false)){
 										for(Object object : objects){
@@ -362,6 +363,7 @@ public abstract class Animal {
 											animal.prey.add(candidate);
 										}
 										System.out.println(this+" acquired possible prey: "+candidate.getSimpleName());
+										logDataToFile();
 									}
 								}
 							}
@@ -455,6 +457,7 @@ public abstract class Animal {
 				animal.attributeFeatures.add(new Feature(featureName, (float) RandomHelper.nextDoubleFromTo(0.0, 1.0) ));
 			}
 			System.out.println(this+" added attribute feature: "+featureName);
+			logDataToFile();
 		} else {
 			while(!exists){
 				int index = RandomHelper.nextIntFromTo(0, FeatureUtils.COMBAT_FEATURE_NAMES.size() - 1);
@@ -476,7 +479,29 @@ public abstract class Animal {
 				animal.combatFeatures.add(new Feature(featureName, (float) RandomHelper.nextDoubleFromTo(0.0, 1.0) ));
 			}
 			System.out.println(this+" added combat feature: "+featureName);
+			logDataToFile();
 		}
+	}
+	
+	protected void logDataToFile(){
+		String preyString = "";
+		for(Class<? extends Object> object : prey){
+			preyString += ", "+object.getSimpleName();
+		}
+		preyString = preyString.replaceFirst(", ", "");
+		String attributeFeaturesString = "";
+		for(Feature feature : attributeFeatures){
+			attributeFeaturesString += ", "+feature.getName();
+		}
+		attributeFeaturesString = attributeFeaturesString.replaceFirst(", ", "");
+		String combatFeaturesString = "";
+		for(Feature feature : combatFeatures){
+			combatFeaturesString += ", "+feature.getName();
+		}
+		combatFeaturesString = combatFeaturesString.replaceFirst(", ", "");
+		String text = String.format("%-10s %-10s %-30s %-70s %-70s", "[ "+(long)RepastEssentials.GetTickCount()+" ]", self.getSimpleName(), preyString, attributeFeaturesString, combatFeaturesString);
+		FeatureUtils.LOGGER.println(text);
+		FeatureUtils.LOGGER.flush();
 	}
 	
 	@Override

@@ -36,6 +36,7 @@ public class Rabbit extends Animal {
 	public Rabbit(ContinuousSpace<Object>space, Grid<Object> grid, List<Feature> combatFeatures, List<Feature> attributeFeatures) {
 		super(space, grid, Rabbit.class, initialPrey, RABBIT_COUNT, attributeFeatures);
 		setCombatFeatures(combatFeatures);
+		if(this.ID == 0) logDataToFile();
 		RABBIT_COUNT++;
 	}
 	
