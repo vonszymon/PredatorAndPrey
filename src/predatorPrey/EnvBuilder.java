@@ -54,7 +54,7 @@ public class EnvBuilder implements ContextBuilder<Object>{
 		int wolfCount = 75;
 		Wolf.lastEvolutionAnimalCount = wolfCount;
 		combatFeatures = Arrays.asList(new Feature("Web", 0.5f), new Feature("Paralysis", 0.5f));
-		attributeFeatures = Arrays.asList(new Feature("ReproduceIntervalDown", 0.5f), new Feature("MaxChildrenUp", 0.5f));
+		attributeFeatures = Arrays.asList(new Feature("MaxStaminaUp", 0.5f), new Feature("MaxChildrenUp", 0.5f));
 		for (int i = 0; i < wolfCount ; i++) {
 			context.add(new Wolf(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}
@@ -79,7 +79,7 @@ public class EnvBuilder implements ContextBuilder<Object>{
 		int rabbitCount = 500;
 		Rabbit.lastEvolutionAnimalCount = rabbitCount;
 		combatFeatures = Arrays.asList(new Feature("ScaryBody", 0.5f), new Feature("Poison", 0.5f));
-		attributeFeatures = Arrays.asList(new Feature("MaxStaminaUp", 0.5f), new Feature("ReproduceEnergyDown", 0.5f));
+		attributeFeatures = Arrays.asList(new Feature("ReproduceIntervalDown", 0.5f), new Feature("ReproduceEnergyDown", 0.5f));
 		for(int i = 0; i < rabbitCount; i++) {
 			context.add(new Rabbit(space, grid, new LinkedList<>(combatFeatures), new LinkedList<>(attributeFeatures)));
 		}

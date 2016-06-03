@@ -6,7 +6,7 @@ import repast.simphony.space.grid.Grid;
 
 public class Lichen extends Plant { 
 	
-	private static int MAX_LICHEN = 1000;
+	private static int MAX_LICHEN = 1200;
 	
 	public static long LICHEN_COUNT = 0;
 	

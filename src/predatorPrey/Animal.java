@@ -37,6 +37,10 @@ public abstract class Animal {
 	
 	private long eatInterval = 7;
 	
+	private long dieAge = 70;
+	
+	private long bornTime;
+	
 	private List<Class<? extends Object>> prey;
 	
 	private Class<? extends Animal> self;
@@ -139,10 +143,13 @@ public abstract class Animal {
 		this.self = self;
 		this.prey.add(prey);
 		this.ID = ID;
+		this.bornTime = (long)RepastEssentials.GetTickCount();
+		this.dieAge += RandomHelper.nextIntFromTo(-10, 10);
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void act() {
+		if(isToDie()) return;
 		energy -= 1;
 		if(energy <= 0){
 			Context<Object> context = ContextUtils.getContext(this);
@@ -169,6 +176,16 @@ public abstract class Animal {
 			}
 		}
 		isToEvolve();
+	}
+	
+	private boolean isToDie(){
+		if((long)RepastEssentials.GetTickCount() - dieAge > bornTime){
+			Context <Object> context = ContextUtils.getContext(this);
+			context.remove(this);
+			System.out.println(this+" died from age");
+			return true;
+		}
+		return false;
 	}
 	
 	private boolean searchForFood(List<GridCell<Object>> gridCells){
@@ -222,8 +239,8 @@ public abstract class Animal {
 				}
 			}
 		}
-		predatorScore += predatorScore * Math.random() / 2.0;
-		preyScore += preyScore * Math.random();
+		predatorScore += 1.5f * Math.random();
+		preyScore += 1.5f * Math.random();
 		if(predatorScore > preyScore) return true;
 		return false;
 	}
@@ -257,23 +274,30 @@ public abstract class Animal {
 	private void reproduce(){
 		long actualStep = (long) RepastEssentials.GetTickCount();
 		if((actualStep - lastReproduceTime >= getReproduceInterval()) && (energy >= getReproduceEnergy())){
-			List<GridCell<Object>> gridCells = getNeighbors(getReproduceRadius());
-			Animal partner = getReproducePartner(gridCells, actualStep);
-			if(partner != null){
-				int children = RandomHelper.nextIntFromTo(1, getMaxChildren());
-				for(int i = 0; i < children; i++){
-					double deltaX = RandomHelper.nextDoubleFromTo(-2.0, 2.0);
-					double deltaY = RandomHelper.nextDoubleFromTo(-2.0, 2.0);
-					NdPoint location = space.getLocation(this);
-					try {
-						createChild(location.getX() + deltaX, location.getY() + deltaY);
-					} catch (Exception e) {
-						e.printStackTrace();
+			int preyCount = 0;
+			Context <Object> context = ContextUtils.getContext(this);
+			for(Class<? extends Object> type: prey){
+				preyCount += context.getObjects(type).size();
+			}
+			if(preyCount > context.getObjects(self).size()){
+				List<GridCell<Object>> gridCells = getNeighbors(getReproduceRadius());
+				Animal partner = getReproducePartner(gridCells, actualStep);
+				if(partner != null){
+					int children = RandomHelper.nextIntFromTo(1, getMaxChildren());
+					for(int i = 0; i < children; i++){
+						double deltaX = RandomHelper.nextDoubleFromTo(-2.0, 2.0);
+						double deltaY = RandomHelper.nextDoubleFromTo(-2.0, 2.0);
+						NdPoint location = space.getLocation(this);
+						try {
+							createChild(location.getX() + deltaX, location.getY() + deltaY);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
+					this.lastReproduceTime = actualStep;
+					partner.lastReproduceTime = actualStep;
+					System.out.println(this+" and "+partner+" produced "+children+" children");
 				}
-				this.lastReproduceTime = actualStep;
-				partner.lastReproduceTime = actualStep;
-				System.out.println(this+" and "+partner+" produced "+children+" children");
 			}
 		}	
 	}
@@ -454,7 +478,7 @@ public abstract class Animal {
 			}
 			for(Object object : objects){
 				Animal animal = (Animal) object;
-				animal.attributeFeatures.add(new Feature(featureName, (float) RandomHelper.nextDoubleFromTo(0.0, 1.0) ));
+				animal.attributeFeatures.add(new Feature(featureName, 0.5f ));
 			}
 			System.out.println(this+" added attribute feature: "+featureName);
 			logDataToFile();
@@ -476,7 +500,7 @@ public abstract class Animal {
 			}
 			for(Object object : objects){
 				Animal animal = (Animal) object;
-				animal.combatFeatures.add(new Feature(featureName, (float) RandomHelper.nextDoubleFromTo(0.0, 1.0) ));
+				animal.combatFeatures.add(new Feature(featureName, 0.5f ));
 			}
 			System.out.println(this+" added combat feature: "+featureName);
 			logDataToFile();

@@ -6,7 +6,7 @@ import repast.simphony.space.grid.Grid;
 
 public class Carrot extends Plant { 
 	
-	private static int MAX_CARROT = 1000;
+	private static int MAX_CARROT = 1200;
 	
 	public static long CARROT_COUNT = 0;
 	

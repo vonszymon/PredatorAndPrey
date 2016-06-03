@@ -11,7 +11,7 @@ public class Wolf extends Animal {
 	
 	public static long WOLF_COUNT = 0;
 	
-	private static int MAX_ENERGY = 25;
+	private static int MAX_ENERGY = 20;
 	
 	private static int MAX_STAMINA = 10;
 	
@@ -21,7 +21,7 @@ public class Wolf extends Animal {
 	
 	private static int STAMINA_LOSS = SPEED;
 	
-	private static int REPRODUCE_INTERVAL = 35;
+	private static int REPRODUCE_INTERVAL = 30;
 	
 	private static int MAX_CHILDREN = 2;
 	
